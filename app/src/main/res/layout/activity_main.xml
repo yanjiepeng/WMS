@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.zk.wms.MainActivity">
+
+   <LinearLayout
+       android:layout_width="0dp"
+       android:layout_height="match_parent"
+       android:layout_weight="1"
+       android:orientation="vertical"
+       android:background="@drawable/corner_no_fill">
+
+       <ImageView
+           android:layout_marginTop="@dimen/DIMEN_40PX"
+           android:layout_width="@dimen/DIMEN_200PX"
+           android:layout_height="@dimen/DIMEN_200PX"
+           android:layout_gravity="center_horizontal"
+           android:layout_marginBottom="@dimen/DIMEN_40PX"
+           android:src="@mipmap/warehouse"/>
+
+       <TextView
+           style="@style/textTitleStyle"
+           android:layout_width="match_parent"
+           android:layout_height="@dimen/DIMEN_60PX"
+           android:text="@string/info" />
+
+       <TextView
+           android:id="@+id/tv_warehouse_id"
+           android:layout_width="match_parent"
+           android:layout_height="@dimen/DIMEN_100PX"
+           style="@style/textStyleLeft"
+           android:text="仓库编号: 0001"
+           />
+       <TextView
+           android:id="@+id/tv_warehouse_xy"
+           android:layout_width="match_parent"
+           android:layout_height="@dimen/DIMEN_100PX"
+           style="@style/textStyleLeft"
+           android:text="仓库坐标: 场1 区域1"/>
+
+       <TextView
+           android:layout_width="match_parent"
+           android:layout_height="@dimen/DIMEN_100PX"
+           style="@style/textStyleLeft"
+           android:text="说明:"/>
+
+       <TextView
+           android:id="@+id/tv_notice1"
+           android:layout_width="match_parent"
+           android:layout_height="@dimen/DIMEN_100PX"
+           style="@style/textStyleLeft"/>
+
+       <TextView
+           android:id="@+id/tv_notice2"
+           android:layout_width="match_parent"
+           android:layout_height="@dimen/DIMEN_100PX"
+           style="@style/textStyleLeft"/>
+       <TextView
+           android:id="@+id/tv_notice3"
+           android:layout_width="match_parent"
+           android:layout_height="@dimen/DIMEN_100PX"
+           style="@style/textStyleLeft"/>
+
+
+
+   </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="3"
+        android:orientation="horizontal"
+        android:layout_marginLeft="@dimen/DIMEN_20PX">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="1">
+
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/chart_left_4"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+            </com.github.mikephil.charting.charts.BarChart>
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/chart_left_3"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+            </com.github.mikephil.charting.charts.BarChart>
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/chart_left_2"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+            </com.github.mikephil.charting.charts.BarChart>
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/chart_left_1"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+            </com.github.mikephil.charting.charts.BarChart>
+
+        </LinearLayout>
+        <View
+            android:layout_width="@dimen/DIMEN_10PX"
+            android:layout_height="match_parent"
+            android:background="@color/rosybrown"/>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="1">
+
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/chart_right_4"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+            </com.github.mikephil.charting.charts.BarChart>
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/chart_right_3"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+            </com.github.mikephil.charting.charts.BarChart>
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/chart_right_2"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+            </com.github.mikephil.charting.charts.BarChart>
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/chart_right_1"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+            </com.github.mikephil.charting.charts.BarChart>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+</LinearLayout>
