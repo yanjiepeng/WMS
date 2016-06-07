@@ -6,6 +6,7 @@ import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.Legend;
@@ -19,6 +20,10 @@ import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.ViewPortHandler;
+import com.zk.database.MyTask;
+import com.zk.database.MyTaskInterface;
+import com.zk.database.SqlUtil;
+import com.zk.database.TAG;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -45,6 +50,30 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
         initActionBar();
         initWidget();
         initChart();
+
+
+        /*
+         异步连接数据库
+         */
+        MyTask myTask = new MyTask(new MyTaskInterface() {
+            @Override
+            public String[] doBackGround() {
+
+                SqlUtil.OnConn();
+                return  null;
+            }
+
+            @Override
+            public void doUi() {
+
+                if (com.zk.database.TAG.MYSQL_CONNECT_FLAG) {
+                    
+                }else {
+                    Toast.makeText(MainActivity.this, "网络错误", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        myTask.equals("conn");
     }
 
     private void initWidget() {

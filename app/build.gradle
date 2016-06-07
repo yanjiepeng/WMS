@@ -29,4 +29,5 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.2.1'
     compile 'com.github.PhilJay:MPAndroidChart:v2.2.5'
+    compile files('libs/mysql-connector-java-5.1.39-bin.jar')
 }
