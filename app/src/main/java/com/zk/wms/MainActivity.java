@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -67,13 +68,13 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
             public void doUi() {
 
                 if (com.zk.database.TAG.MYSQL_CONNECT_FLAG) {
-                    
+                    Log.w("SQL","连接成功");
                 }else {
                     Toast.makeText(MainActivity.this, "网络错误", Toast.LENGTH_SHORT).show();
                 }
             }
         });
-        myTask.equals("conn");
+        myTask.execute("conn");
     }
 
     private void initWidget() {

@@ -4,9 +4,7 @@ import android.util.Log;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 /**
  * Created by Administrator on 2016/6/7.
@@ -53,6 +51,7 @@ public class SqlUtil {
         conn = openConnection(URL ,USER ,PASSWORD);
         Log.i("tag", 1 + "");
     }
+
 
 
 
