@@ -2,9 +2,13 @@ package com.zk.database;
 
 import android.util.Log;
 
+import com.zk.bean.bin;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * Created by Administrator on 2016/6/7.
@@ -52,9 +56,51 @@ public class SqlUtil {
         Log.i("tag", 1 + "");
     }
 
+    /*
+      获取最新的一条数据
+     */
 
+    public static bin GetMostNewData() {
 
+        String sql = "SELECT * FROM vr WHERE id=(SELECT MAX(id)FROM vr);" ;    //此sql用于获取表中id最大的数据 即是最新的数据
+        bin b = new bin();
+        if (conn == null) {
+            return null;
+        }
+        Statement stmt = null;
+        ResultSet rs = null;
 
+        try {
+            stmt = conn.createStatement();
+            if ( stmt !=null) {
+                rs = stmt.executeQuery(sql);
+                while (rs.next()) {
+                    b.setId(rs.getInt(1)+"");
+                    b.setX(rs.getInt(2) + "");
+                    b.setY(rs.getInt(3)+"");
+                    b.setKind(rs.getString(4));
+                }
+                return b;
+            }else {
+                return null;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
+        try {
+            if (rs != null) {
+                rs.close();
+                rs = null;
+            }
+            if (stmt !=null ){
+                stmt.close();
+                stmt = null;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return  b;
+    }
 
 }

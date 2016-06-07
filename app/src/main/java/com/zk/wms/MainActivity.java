@@ -1,6 +1,7 @@
 package com.zk.wms;
 
 import android.app.ActionBar;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
@@ -25,12 +26,13 @@ import com.zk.database.MyTask;
 import com.zk.database.MyTaskInterface;
 import com.zk.database.SqlUtil;
 import com.zk.database.TAG;
+import com.zk.service.UpdateService;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements OnChartValueSelectedListener {
+public class MainActivity extends AppCompatActivity {
 
     private BarChart left_chart_1 , left_chart_2 , left_chart_3 ,left_chart_4 ;
     private BarChart right_chart_1,right_chart_2,right_chart_3,right_chart_4;
@@ -75,6 +77,10 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
             }
         });
         myTask.execute("conn");
+
+        Intent intent = new Intent(MainActivity.this , UpdateService.class);
+        startService(intent);
+
     }
 
     private void initWidget() {
@@ -117,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
         for ( BarChart b:chartList
              ) {
 
-            b.setOnChartValueSelectedListener(this);
+            b.setOnChartValueSelectedListener(new MyOnChartValueSelectedListener(b.getId()));
             b.setDrawBarShadow(false);
             b.setDrawValueAboveBar(false);
             b.setScaleEnabled(false);
@@ -226,15 +232,7 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
         actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM | ActionBar.DISPLAY_SHOW_HOME);
     }
 
-    @Override
-    public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
 
-    }
-
-    @Override
-    public void onNothingSelected() {
-
-    }
 
     class MyvalueFomatter implements ValueFormatter {
 
@@ -248,5 +246,40 @@ public class MainActivity extends AppCompatActivity implements OnChartValueSelec
         public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
             return mFormat.format(value);
         }
+    }
+    class MyOnChartValueSelectedListener implements OnChartValueSelectedListener {
+
+        int chartid ;
+        public MyOnChartValueSelectedListener(int chartid) {
+
+            this.chartid = chartid;
+        }
+
+        @Override
+        public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
+
+                Log.w("点击", e.getXIndex()+"列" + chartid+"行");
+        }
+
+        @Override
+        public void onNothingSelected() {
+
+            //无选中时
+
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Intent intent = new Intent() ;
+        intent.setAction("AAAA");
+        intent.putExtra("cmd" , com.zk.database.TAG.CMD_STOP_SERVICE);
+        sendBroadcast(intent);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 }
