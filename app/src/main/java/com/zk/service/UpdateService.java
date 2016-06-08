@@ -68,11 +68,9 @@ public class UpdateService extends Service {
         @Override
         public void onReceive(Context context, Intent intent) {
             int cmd = intent.getIntExtra("cmd" , -1) ;
-
             if (cmd == TAG.CMD_STOP_SERVICE) {
                 stopSelf(); //停止服务
             }
         }
     }
-
 }
