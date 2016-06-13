@@ -28,7 +28,12 @@ import com.zk.database.MyTask;
 import com.zk.database.MyTaskInterface;
 import com.zk.database.SqlUtil;
 import com.zk.database.TAG;
+import com.zk.event.EventAA;
 import com.zk.service.UpdateService;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -55,34 +60,25 @@ public class MainActivity extends AppCompatActivity {
         initActionBar();
         initWidget();
         initChart();
-
-
-        /*
-         异步连接数据库
-         */
-        MyTask myTask = new MyTask(new MyTaskInterface() {
-            @Override
-            public String[] doBackGround() {
-
-                SqlUtil.OnConn();
-                return null;
-            }
-
-            @Override
-            public void doUi() {
-
-                if (com.zk.database.TAG.MYSQL_CONNECT_FLAG) {
-                    Log.w("SQL", "连接成功");
-                } else {
-                    Toast.makeText(MainActivity.this, "网络错误", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-        myTask.execute("conn");
+        EventBus.getDefault().register(this);
 
         Intent intent = new Intent(MainActivity.this, UpdateService.class);
         startService(intent);
 
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventMainThread(EventAA eventAA) {
+        if (eventAA.getActionType() == EventAA.ACTION_SEND_MSG) {
+            //此处为eventbus回调 解析数据并更新界面
+            String result = eventAA.getMessage();
+            if (result.equals("error")) {
+                Toast.makeText(MainActivity.this, "网络错误", Toast.LENGTH_SHORT).show();
+            }else if (!result.isEmpty()) {
+
+                //解析并更新界面
+            }
+        }
     }
 
     private void initWidget() {
@@ -206,13 +202,13 @@ public class MainActivity extends AppCompatActivity {
         //初始化y轴数据
 
         for (int i = 0; i < column.length; i++) {
-            float value = i + 10;
+            float value = 1;
             yValues.add(new BarEntry(value, i));
         }
 
         // y轴的数据集合
         BarDataSet barDataSet = new BarDataSet(yValues, "第四层");
-
+        barDataSet.setValueFormatter(new MyvalueFomatter());
         barDataSet.setColor(Color.rgb(114, 188, 223));
 
         ArrayList<IBarDataSet> barDataSets = new ArrayList<IBarDataSet>();

@@ -29,5 +29,8 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.2.1'
     compile 'com.github.PhilJay:MPAndroidChart:v2.2.5'
+    compile 'com.squareup.okhttp:okhttp:2.4.0'
+    compile 'org.greenrobot:eventbus:3.0.0'
     compile files('libs/mysql-connector-java-5.1.7-bin.jar')
+    compile files('libs/gson-2.2.4.jar')
 }

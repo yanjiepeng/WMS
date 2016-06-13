@@ -8,16 +8,26 @@ import android.content.IntentFilter;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 import com.zk.bean.bin;
 import com.zk.database.SqlUtil;
 import com.zk.database.TAG;
+import com.zk.event.EventAA;
 
+import org.greenrobot.eventbus.EventBus;
+
+import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class UpdateService extends Service {
 
     private CommandReceiver cmdReceiver;
+    private OkHttpClient client = new OkHttpClient();
+    private String uri= "";
     public UpdateService() {
     }
 
@@ -30,7 +40,7 @@ public class UpdateService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         Timer timer = new Timer();
-        timer.schedule(new GetRecentlyData() , 0 , 1000);
+    //    timer.schedule(new GetRecentlyData() , 0 , 1000);
         IntentFilter filter = new IntentFilter() ;
         filter.addAction("AAAA");
         registerReceiver(cmdReceiver , filter);
@@ -48,11 +58,32 @@ public class UpdateService extends Service {
 
         @Override
         public void run() {
-            if (TAG.MYSQL_CONNECT_FLAG) {
-                bin b  = SqlUtil.GetMostNewData();
-                Log.w("result", b.toString());
-            }
+            /*
+            此处联网请求数据
+            */
+            enqueue();
         }
+    }
+
+    private void enqueue() {
+
+        Request request = new Request.Builder().url(uri).build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                e.printStackTrace();
+                EventBus.getDefault().post(new EventAA("error", EventAA.ACTION_SEND_MSG));
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+
+                if (response.isSuccessful()) {
+                    String result  = response.body().string();
+                    EventBus.getDefault().post(new EventAA(result , EventAA.ACTION_SEND_MSG));
+                }
+            }
+        });
     }
 
     @Override
