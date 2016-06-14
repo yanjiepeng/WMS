@@ -24,6 +24,9 @@ import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.ViewPortHandler;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.zk.bean.BinInfo;
 import com.zk.database.MyTask;
 import com.zk.database.MyTaskInterface;
 import com.zk.database.SqlUtil;
@@ -41,16 +44,18 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private BarChart left_chart_1, left_chart_2, left_chart_3, left_chart_4;
-    private BarChart right_chart_1, right_chart_2, right_chart_3, right_chart_4;
+    private BarChart left_chart_1, left_chart_2, left_chart_3;
+    private BarChart right_chart_1, right_chart_2, right_chart_3;
     private TextView tv_warehouse_id, tv_warehouse_xy, tv_notice_1, tv_notice_2, tv_notice_3;
 
     protected String[] column = new String[]{
-            "1列", "2列", "3列", "4列", "5列", "6列", "7列", "8列", "9列", "10列", "11列", "12列", "13列", "14列", "15列", "16列", "17列", "18列", "19列", "20列", "21列", "22列", "23列", "24列"
+            "1列", "2列", "3列", "4列", "5列", "6列", "7列", "8列"
     };
     protected String[] index = new String[]{"第一层", "第二层", "第三层", "第四层"};
     private Typeface mTf;
     private List<BarChart> chartList;
+    private Gson gson = new Gson();
+    private List<BinInfo> data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,24 +64,38 @@ public class MainActivity extends AppCompatActivity {
 
         initActionBar();
         initWidget();
-        initChart();
-        EventBus.getDefault().register(this);
-
         Intent intent = new Intent(MainActivity.this, UpdateService.class);
         startService(intent);
+        EventBus.getDefault().register(this);
+        data = new ArrayList<BinInfo>();
+
+
+
+
 
     }
 
+    /*
+      eventBus回调 主线程
+     */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(EventAA eventAA) {
         if (eventAA.getActionType() == EventAA.ACTION_SEND_MSG) {
+
             //此处为eventbus回调 解析数据并更新界面
             String result = eventAA.getMessage();
             if (result.equals("error")) {
                 Toast.makeText(MainActivity.this, "网络错误", Toast.LENGTH_SHORT).show();
-            }else if (!result.isEmpty()) {
-
+            } else if (!result.isEmpty()) {
                 //解析并更新界面
+                data.clear();
+                data = gson.fromJson(result, new TypeToken<List<BinInfo>>() {
+                }.getType());
+                for (int i = 0 ; i < data.size(); i ++) {
+                    data.get(i).setId(i);
+                }
+                Log.w("data size", data.size() + "");
+                initChart();
             }
         }
     }
@@ -86,22 +105,18 @@ public class MainActivity extends AppCompatActivity {
         left_chart_1 = (BarChart) findViewById(R.id.chart_left_1);
         left_chart_2 = (BarChart) findViewById(R.id.chart_left_2);
         left_chart_3 = (BarChart) findViewById(R.id.chart_left_3);
-        left_chart_4 = (BarChart) findViewById(R.id.chart_left_4);
 
         right_chart_1 = (BarChart) findViewById(R.id.chart_right_1);
         right_chart_2 = (BarChart) findViewById(R.id.chart_right_2);
         right_chart_3 = (BarChart) findViewById(R.id.chart_right_3);
-        right_chart_4 = (BarChart) findViewById(R.id.chart_right_4);
 
 
         chartList.add(left_chart_1);
         chartList.add(left_chart_2);
         chartList.add(left_chart_3);
-        chartList.add(left_chart_4);
         chartList.add(right_chart_1);
         chartList.add(right_chart_2);
         chartList.add(right_chart_3);
-        chartList.add(right_chart_4);
 
 
         tv_notice_1 = (TextView) findViewById(R.id.tv_notice1);
@@ -119,10 +134,11 @@ public class MainActivity extends AppCompatActivity {
      */
     private void initChart() {
 
+        int id = 0;
         for (BarChart b : chartList
                 ) {
 
-            b.setOnChartValueSelectedListener(new MyOnChartValueSelectedListener(b.getId()));
+            b.setOnChartValueSelectedListener(new MyOnChartValueSelectedListener(id++));
             b.setDrawBarShadow(false);
             b.setDrawValueAboveBar(false);
             b.setScaleEnabled(false);
@@ -131,32 +147,41 @@ public class MainActivity extends AppCompatActivity {
             b.setMaxVisibleValueCount(30);
             b.setPinchZoom(false);
             b.setNoDataText("空");
-            b.setDrawGridBackground(false); //背景是否有格子
+            b.setDrawGridBackground(true); //背景是否有格子
+            b.getAxisLeft().setDrawGridLines(false);
+            b.getXAxis().setDrawGridLines(false);
+            b.getAxisRight().setEnabled(false);
+            b.getAxisLeft().setEnabled(false);
+            //设置y最大值为1
+            b.getAxisLeft().setAxisMaxValue(1f);
 
             Legend mLegend = b.getLegend();
             mLegend.setForm(Legend.LegendForm.CIRCLE);// 样式
             mLegend.setFormSize(5f);
         }
-        BarData data_left1 = initChartContentleft(1);
-        BarData data_left2 = initChartContentleft(2);
-        BarData data_left3 = initChartContentleft(3);
-        BarData data_left4 = initChartContentleft(4);
-        BarData data_right = initChartContentRight();
+        if (data!=null && !data.isEmpty()) {
+            BarData data_left1 = initChartContentleft(1);
+            BarData data_left2 = initChartContentleft(2);
+            BarData data_left3 = initChartContentleft(3);
+            BarData data_right1 = initChartContentRight(1);
+            BarData data_right2 = initChartContentRight(2);
+            BarData data_right3 = initChartContentRight(3);
 
-        chartList.get(0).setData(data_left1);
-        chartList.get(1).setData(data_left2);
-        chartList.get(2).setData(data_left3);
-        chartList.get(3).setData(data_left4);
-        chartList.get(4).setData(data_right);
-        chartList.get(5).setData(data_right);
-        chartList.get(6).setData(data_right);
-        chartList.get(7).setData(data_right);
-        for (int i = 0; i < 8; i++) {
-            chartList.get(i).animateX(2000);
+            chartList.get(0).setData(data_left1);
+            chartList.get(1).setData(data_left2);
+            chartList.get(2).setData(data_left3);
+            chartList.get(3).setData(data_right1);
+            chartList.get(4).setData(data_right2);
+            chartList.get(5).setData(data_right3);
+            for (int i = 0; i < chartList.size(); i++) {
+                chartList.get(i).animateX(0);
+            }
         }
     }
 
-
+    /*
+     初始化柱状图数据
+     */
     private BarData initChartContentleft(int index) {
         ArrayList<BarEntry> yValues = new ArrayList<BarEntry>();
         ArrayList<String> xValues = new ArrayList<String>();
@@ -168,10 +193,35 @@ public class MainActivity extends AppCompatActivity {
 
         //初始化y轴数据
 
-        for (int i = 0; i < column.length; i++) {
-            float value = (float) (Math.random() * 100/*100以内的随机数*/) + 3;
-
-            yValues.add(new BarEntry(value, i));
+        if (index == 1) {
+            for (int i = 0; i < column.length; i++) {
+                if (!data.get(i).isEmpty()) {
+                    float value = 1f;
+                    yValues.add(new BarEntry(value, i));
+                }else {
+                    yValues.add(new BarEntry(0f , i));
+                }
+            }
+        }
+        if (index == 2) {
+            for (int i = 0; i < column.length; i++) {
+                if (!data.get(8+i).isEmpty()) {
+                    float value = 1f;
+                    yValues.add(new BarEntry(value, i));
+                }else {
+                    yValues.add(new BarEntry(0f , i));
+                }
+            }
+        }
+        if (index == 3) {
+            for (int i = 0; i < column.length; i++) {
+                if (!data.get(16+i).isEmpty()) {
+                    float value = 1f;
+                    yValues.add(new BarEntry(value, i));
+                }else {
+                    yValues.add(new BarEntry(0f , i));
+                }
+            }
         }
 
         // y轴的数据集合
@@ -182,6 +232,7 @@ public class MainActivity extends AppCompatActivity {
         barDataSet.setColor(Color.rgb(114, 188, 223));
 
         ArrayList<IBarDataSet> barDataSets = new ArrayList<IBarDataSet>();
+        barDataSet.setDrawValues(false);
         barDataSets.add(barDataSet); // add the datasets
 
         BarData barData = new BarData(xValues, barDataSets);
@@ -191,7 +242,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private BarData initChartContentRight() {
+    private BarData initChartContentRight(int index ) {
         ArrayList<BarEntry> yValues = new ArrayList<BarEntry>();
         ArrayList<String> xValues = new ArrayList<String>();
         //初始化标签 x轴
@@ -201,21 +252,46 @@ public class MainActivity extends AppCompatActivity {
 
         //初始化y轴数据
 
-        for (int i = 0; i < column.length; i++) {
-            float value = 1;
-            yValues.add(new BarEntry(value, i));
+        if (index == 1) {
+            for (int i = 0; i < column.length; i++) {
+                if (!data.get(24+i).isEmpty()) {
+                    float value = 1f;
+                    yValues.add(new BarEntry(value, i));
+                }else {
+                    yValues.add(new BarEntry(0f , i));
+                }
+            }
+        }
+        if (index ==2) {
+            for (int i = 0; i < column.length; i++) {
+                if (!data.get(32+i).isEmpty()) {
+                    float value = 1f;
+                    yValues.add(new BarEntry(value, i));
+                }else {
+                    yValues.add(new BarEntry(0f , i));
+                }
+            }
+        }
+        if (index ==3) {
+            for (int i = 0; i < column.length; i++) {
+                if (!data.get(40+i).isEmpty()) {
+                    float value = 1f;
+                    yValues.add(new BarEntry(value, i));
+                }else {
+                    yValues.add(new BarEntry(0f , i));
+                }
+            }
         }
 
         // y轴的数据集合
-        BarDataSet barDataSet = new BarDataSet(yValues, "第四层");
+        BarDataSet barDataSet = new BarDataSet(yValues, "第"+index % 4+"层");
         barDataSet.setValueFormatter(new MyvalueFomatter());
         barDataSet.setColor(Color.rgb(114, 188, 223));
 
         ArrayList<IBarDataSet> barDataSets = new ArrayList<IBarDataSet>();
         barDataSets.add(barDataSet); // add the datasets
-
+        barDataSet.setDrawValues(false);
         BarData barData = new BarData(xValues, barDataSets);
-
         return barData;
 
     }
@@ -232,6 +308,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    /*
+        格式化数据
+     */
     class MyvalueFomatter implements ValueFormatter {
 
 
@@ -247,6 +326,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /*
+      图表点击监听
+     */
     class MyOnChartValueSelectedListener implements OnChartValueSelectedListener {
 
         int chartid;
@@ -286,6 +368,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /*
+      查询详情线程
+     */
     class DetailInfoThread extends Thread {
 
         int chartId, index;
@@ -306,13 +391,15 @@ public class MainActivity extends AppCompatActivity {
             super.run();
             //此处根据立体库编号和列数请求详细信息
 
-
-
             runOnUiThread(new Runnable() {
-                String info = "库位编号:1 \t " +
-                        "排:" + chartId + " \t" +
-                        "列:" + index + " \t" +
-                        "信息:产品 \t";
+                              String[] row = {"第一行", "第二行", "第三行"
+                              ,"第一行","第二行","第三行"};
+
+                    String info = "库位编号:1 \t " +
+                            "排:" + row[chartId] + " \t" +
+                            "列:" + index + " \t" +
+                            "类型：" + data.get((chartId + 1) * 8 + index).getDesc()+" \t";
+
                 @Override
                 public void run() {
                     AlertDialog dialog = new AlertDialog.Builder(MainActivity.this).create();

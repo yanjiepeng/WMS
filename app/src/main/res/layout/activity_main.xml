@@ -85,13 +85,6 @@
             android:layout_weight="1">
 
             <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/chart_left_4"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1">
-
-            </com.github.mikephil.charting.charts.BarChart>
-            <com.github.mikephil.charting.charts.BarChart
                 android:id="@+id/chart_left_3"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -113,6 +106,7 @@
 
             </com.github.mikephil.charting.charts.BarChart>
 
+
         </LinearLayout>
         <View
             android:layout_width="@dimen/DIMEN_10PX"
@@ -124,13 +118,6 @@
             android:orientation="vertical"
             android:layout_weight="1">
 
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/chart_right_4"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1">
-
-            </com.github.mikephil.charting.charts.BarChart>
             <com.github.mikephil.charting.charts.BarChart
                 android:id="@+id/chart_right_3"
                 android:layout_width="match_parent"
@@ -152,6 +139,7 @@
                 android:layout_weight="1">
 
             </com.github.mikephil.charting.charts.BarChart>
+
 
         </LinearLayout>
 

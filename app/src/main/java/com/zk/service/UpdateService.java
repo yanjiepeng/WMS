@@ -27,7 +27,8 @@ public class UpdateService extends Service {
 
     private CommandReceiver cmdReceiver;
     private OkHttpClient client = new OkHttpClient();
-    private String uri= "";
+    Timer timer;
+    private String uri= "http://www.mocky.io/v2/575f6c060f00006900a6b016";
     public UpdateService() {
     }
 
@@ -39,12 +40,11 @@ public class UpdateService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        Timer timer = new Timer();
-    //    timer.schedule(new GetRecentlyData() , 0 , 1000);
+        timer = new Timer();
+        timer.schedule(new GetRecentlyData() , 0 , 1000);
         IntentFilter filter = new IntentFilter() ;
         filter.addAction("AAAA");
         registerReceiver(cmdReceiver , filter);
-
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -74,7 +74,6 @@ public class UpdateService extends Service {
                 e.printStackTrace();
                 EventBus.getDefault().post(new EventAA("error", EventAA.ACTION_SEND_MSG));
             }
-
             @Override
             public void onResponse(Response response) throws IOException {
 
@@ -90,7 +89,7 @@ public class UpdateService extends Service {
     public void onDestroy() {
         super.onDestroy();
         unregisterReceiver(cmdReceiver);
-
+        timer.cancel();
     }
 
     //接受广播
