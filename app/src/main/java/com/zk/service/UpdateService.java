@@ -28,7 +28,8 @@ public class UpdateService extends Service {
     private CommandReceiver cmdReceiver;
     private OkHttpClient client = new OkHttpClient();
     Timer timer;
-    private String uri= "http://www.mocky.io/v2/575f6c060f00006900a6b016";
+    private String uri= "http://192.168.3.6:8080/sshe/base/agv!notNeedSecurity_wmsStatus.sy";
+    private String uri_test = "http://www.mocky.io/v2/57640022110000da09c331a5";
     public UpdateService() {
     }
 
@@ -67,7 +68,7 @@ public class UpdateService extends Service {
 
     private void enqueue() {
 
-        Request request = new Request.Builder().url(uri).build();
+        Request request = new Request.Builder().url(uri_test).build();
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Request request, IOException e) {

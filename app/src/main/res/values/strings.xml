@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">WMS</string>
-    <string name="title_name">仓库管理系统</string>
+    <string name="title_name">智慧仓库管理系统</string>
     <string name="info">仓库信息</string>
 </resources>

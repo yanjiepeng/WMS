@@ -8,7 +8,9 @@ import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -225,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // y轴的数据集合
-        BarDataSet barDataSet = new BarDataSet(yValues, "第" + index + "层");
+        BarDataSet barDataSet = new BarDataSet(yValues, "第" + index + "层[左]");
         //取整
         barDataSet.setValueFormatter(new MyvalueFomatter());
 
@@ -284,7 +286,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // y轴的数据集合
-        BarDataSet barDataSet = new BarDataSet(yValues, "第"+index % 4+"层");
+        BarDataSet barDataSet = new BarDataSet(yValues, "第"+index % 4+"层[右]");
         barDataSet.setValueFormatter(new MyvalueFomatter());
         barDataSet.setColor(Color.rgb(114, 188, 223));
 
@@ -303,7 +305,7 @@ public class MainActivity extends AppCompatActivity {
 
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setCustomView(R.layout.titlebar);
-        actionBar.setIcon(R.drawable.zklogo);
+        actionBar.setIcon(R.mipmap.mjlogo);
         actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM | ActionBar.DISPLAY_SHOW_HOME);
     }
 
@@ -392,17 +394,17 @@ public class MainActivity extends AppCompatActivity {
             //此处根据立体库编号和列数请求详细信息
 
             runOnUiThread(new Runnable() {
-                              String[] row = {"第一行", "第二行", "第三行"
-                              ,"第一行","第二行","第三行"};
-
-                    String info = "库位编号:1 \t " +
-                            "排:" + row[chartId] + " \t" +
-                            "列:" + index + " \t" +
-                            "类型：" + data.get((chartId + 1) * 8 + index).getDesc()+" \t";
+                              String[] row = {"第1行[左]", "第2行[左]", "第3行[左]"
+                              ,"第6行[右]","第5行[右]","第4行[右]"};
+                    String colum = String.valueOf(index +1);
+                    String info = "库位编号:1 \t " + "货位编号"+data.get((chartId) * 8 + index).getId() +
+                             "\t"+"行:" + row[chartId] + " \t" +
+                            "列:" + colum  + " \t" +
+                            "类型：" + data.get((chartId) * 8 + index).getDesc()+" \t";
 
                 @Override
                 public void run() {
-                    AlertDialog dialog = new AlertDialog.Builder(MainActivity.this).create();
+                    final AlertDialog dialog = new AlertDialog.Builder(MainActivity.this).create();
                     dialog.show();
                     Window window = dialog.getWindow();
                     window.setContentView(R.layout.dialog_layout);
@@ -410,6 +412,13 @@ public class MainActivity extends AppCompatActivity {
                     tv_title.setText("详细信息");
                     TextView tv_message = (TextView) window.findViewById(R.id.tv_dialog_message);
                     tv_message.setText(info);
+                    TextView btn_dismiss = (TextView) window.findViewById(R.id.btn_dismiss);
+                    btn_dismiss.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                        }
+                    });
                 }
             });
         }
@@ -427,6 +436,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+
         super.onDestroy();
+        Intent intent = new Intent();
+        intent.setAction("AAAA");
+        intent.putExtra("cmd", com.zk.database.TAG.CMD_STOP_SERVICE);
     }
 }
